@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Peta&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Magra:wght@700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <title>Chopsticks Dashboard</title>
+    {% block stylesheets %}
+    {% endblock stylesheets %}
+
+    {% block headscript %}
+    {% endblock headscript %}
+</head>
+
+<body>
+    <div class="main-section">
+        <div class="navbar-div-main">
+            <div class="header-logo-div">
+                <div class="header-logo">
+                    <img src="{% static 'images/logo1.png' %}" class="d-inline-block">
+                </div>
+            </div>
+            <div class="sidemenu-items-div-main">
+                <div class="outlet-div">
+                    <div class="form-group">
+                        <select class="form-control form-control-sm radius" style="font-weight:bold;" onchange="location = this.value;">
+                            <option value="">select outlet</option>
+                            {% for one in location %}
+                            <option value="{% url 'orders:today_order' one.pk %}">{{one.outlet_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="sidemenu-item-div">
+                    {% with request.resolver_match.url_name as url_name %}
+
+                    <li class="menu-item-list"><a href="#">DASHBOARD</a></li>
+
+                    <li class="menu-item-list  {% if url_name == 'all_dishes' %}menu-item-active{% endif %}"><a href="{% url 'dishes:all_dishes' outlet_objects.pk food_objects.pk %}">MENU</a></li>
+
+                    <li class="menu-item-list {% if url_name == 'today_order' or url_name == 'order_master' or url_name == 'order_cancle' or url_name == 'order_details' or url_name == 'new_order' %}menu-item-active{% endif %}"><a href="{% url 'orders:today_order' outlet_objects.pk %}">ORDERS</a></li>
+
+                    <li class="menu-item-list  {% if url_name == 'customer_master' or url_name == 'customer_detail' %}menu-item-active{% endif %}"><a href="{% url 'customer:customer_master' %}">CUSTOMERS</a></li>
+                    
+                    {% comment %} <li class="menu-item-list  {% if url_name == 'outlet_master' %}menu-item-active{% endif %}"><a href="{% url 'outlet:outlet_master' %}">OUTLET</a></li> {% endcomment %}
+
+                    <li class="menu-item-list"><a href="#">REPORTS</a></li>
+
+                    <li class="logout-menu"><a href="{% url 'accounts:logout' %}">LOGOUT</a></li>
+
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+        <div class="body-main-div">
+            {% block content %}
+
+            {% endblock  %}
+        </div>
+    </div>
+
+    {% block script %}
+    {% endblock  %}
+
+    {% block extrascript %}
+    {% endblock  %}
+</body>
+
+</html>

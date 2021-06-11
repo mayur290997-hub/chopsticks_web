@@ -1,0 +1,119 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% load menu_item_count %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block headscript %}
+{% endblock headscript %}
+
+{% block content %}
+<div class="main">
+
+    <div class="container mt-4">
+    <form action="{% url 'food_section:food_add' outlet_objects.pk %}" method="POST">
+    {% csrf_token %}
+        <div class="row">
+            <div class="col-3">
+                <input type="text" name="section_name" id="section_name" class="form-control form-control-sm radius" placeholder="Add New Food Section" required>
+            </div>
+            <div class="col-3">
+                <select name="outlet_id" id="outlet_id" class="form-control form-control-sm radius">
+                    {% for one in location %}
+                    <option value="{{one.pk}}">{{one.outlet_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-sm btn-warning radius">Add Section </button>
+            </div>
+            <div class="col">
+                <a href="{% url 'dishes:all_dishes' outlet_objects.pk food_objects.pk %}" class="btn btn-sm btn-info radius" style="float:right;"><i class="fa fa-angle-left" aria-hidden="true"></i> </a>
+            </div>
+        </div>
+    </form>
+    </div>
+    {% if error_msg %}<p style="color:red">{{error_msg}}</p>{% endif %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <div>
+                    <table id="table_id" class="display table-bordered table-sm" style="width: 100%;;font-size: 12px">
+                        <thead>
+                            <tr>
+                                <th>Sr. No.</th>
+                                <th>Food Section Name</th>
+                                 <th>Menu Item Count</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for one in all_section %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{one.section_name}}</td>
+                                <td>{{item_count|get_item:one.pk}}</td>
+                                {% if one.is_active == True %}
+                                <td style="color:#50ef55">Active</td>
+                                {% else %}
+                                <td class="softer-text" style="color:#828586">Inactive</td>
+                                {% endif %}
+                                <td> <i class="fa fa-pencil" data-toggle="modal" data-target="#update{{one.pk}}"></i> </td>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="update{{one.pk}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Update Food Section</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{% url 'food_section:food__section_update' outlet_objects.pk one.pk  %}" method="POST">
+                                                    {% csrf_token %}
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Food Section Name :</label>
+                                                        <input type="text" class="form-control form-control-sm" id="section_name" name="section_name" value="{{one.section_name}}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Status :</label>
+                                                        <select name="is_active" id="is_active" class="form-control form-control-sm" >
+                                                            <option value="True" {% if one.is_active == True %} selected {% endif %}>Active</option>
+                                                            <option value="False" {% if one.is_active == False %} selected {% endif %}>Inactive</option>
+                                                        </select>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $('#table_id').DataTable();
+    });
+
+</script>
+{% endblock %}
+
+{% block extrascript %}
+{% endblock %}

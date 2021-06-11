@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Peta&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Magra:wght@700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+
+    <link rel="stylesheet" href="{% static 'css/main1.css' %}">
+    <title>Chopsticks Dashboard</title>
+    {% block stylesheets %}
+    {% endblock stylesheets %}
+
+    {% block headscript %}
+    {% endblock headscript %}
+
+    <style>
+        .user_details_input {
+            height: 25px
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="main-section">
+        <div class="header-div">
+            <div class="row">
+                <div class="col">
+                    <img src="{% static 'images/logo1.png' %}" class="d-inline-block">
+                </div>
+                <div class="col">
+                    <a href="" class="btn btn-lg green-btn radius add-order-div"><i class="fa fa-plus" aria-hidden="true"></i><b> NEW ORDER </b></a>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" action="{% url 'orders:add_new_order_submit' outlet_objects.pk %}" autocomplete="off">
+            {% csrf_token %}
+            <div class="main">
+                <div class="">
+                    <div class="row order-class-div">
+                        <div class="col" style="border-right: 1px solid #d9d9d9;">
+                            <div style="width:90%;margin:0 auto">
+                                <h6 class="title-heading big red ">CUSTOMER DETAILS</h6>
+                                <div class="row mb-2">
+                                    <div class="col-8">
+                                        <input type="text" id="mobile_num" name="mobile_num" list="user_data" class="form-control form-control-sm radius serch-div" maxlength="10" placeholder="Enter Customer Mobile No" pattern="(7|8|9)\d{9}" oninvalid="setCustomValidity('Wrong Number.Please Enter Valid Number ')" onchange="try{setCustomValidity('')}catch(e){}">
+                                        <datalist id="user_data">
+                                            {% for one in all_customers %}
+                                            <option value="{{one.username}}">
+                                                {% endfor %}
+                                        </datalist>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" id="search_mob" class="btn btn-sm search-btn radius">SEARCH</button>
+                                    </div>
+                                </div>
+                                <span id="error_lable" style="text-align:left;color:#ff0000;font-size:12px;"> </span> <span id="mb-num" style="font-size:17px;color:#ff0000;font-weight:bold"></span>
+
+                                <div class="row" style="margin-top:0px;">
+                                    <div class="menu-items-div">
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <div class="cust-detail">
+                                                    <h6 class="">Full Name :</h6>
+                                                    <h6 class="mt-3">Mobile Number :</h6>
+                                                    <h6 class="mt-4">Delivery Address :</h6>
+                                                    <h6 class="pt-4">Landmark :</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-7">
+                                                <div class="cust-detail-right">
+                                                    <input type="text" name="full_name" id="full_name" class="form-control form-control-sm radius user_details_input" placeholder="Enter Customer Name" required>
+                                                    <input type="text" name="mobile_no" id="mobile_no" class="form-control form-control-sm radius user_details_input mt-2" placeholder="Enter Customer Mobile" maxlength="10" required pattern="(7|8|9)\d{9}" oninvalid="setCustomValidity('Wrong Number.Please Enter Valid Number ')" onchange="try{setCustomValidity('')}catch(e){}">
+                                                    <textarea name="address" id="address" class="form-control form-control-sm radius mt-2" placeholder="Customer Address" required></textarea>
+                                                    <input type="text" name="landmark" id="landmark" class="form-control form-control-sm radius user_details_input mt-1" placeholder="Enter Landmark" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="menu-items-div">
+                                        <div class="row text-center">
+                                            <div class="col">
+                                                <h6 class="cust-label gray">TOTAL ORDERS</h6>
+                                                <h6 class="cust-label-dw red bold js-validate-username" id="ttl-order"></h6>
+                                            </div>
+                                            <div class="col">
+                                                <h6 class="cust-label gray">TOTAL CANCELS</h6>
+                                                <h6 class="cust-label-dw red bold" id="ttl-cancel"></h6>
+                                            </div>
+                                            <div class="col">
+                                                <h6 class="cust-label gray">TOTAL SALES</h6>
+                                                <h6 class="cust-label-dw red bold"><i class="fa fa-inr red" aria-hidden="true"></i><span id="ttl-sum"> </span></h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                    <span class="title-heading hex" style="float:center;margin-top:10px;">LAST ORDERS DETAILS</span><br>
+                                    <div class="menu-item-div">
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <h6 class="item-name head">Order Date: <span class="red bold">02-06-2021</span></h6>
+                                            </div>
+                                            <div class="col-3">
+                                                <span class="item-price red bold"><i class="fa fa-inr red" aria-hidden="true"></i> 100 </span>&nbsp;&nbsp; <span> <i class="fa fa-angle-right" id="order-check1"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="total-menu-item-div" id="order-div" style="display:none">
+                                        <div class="menu-item-div12">
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <h6 class="item-name head"><i class="fa fa-square nv"></i> chou chou soup</h6>
+                                                </div>
+                                                <div class="col-4">
+                                                    <span class="item-price red bold"><i class="fa fa-inr red" aria-hidden="true"></i> 100 </span>&nbsp;&nbsp; <span><a href="#"><i class="fa fa-trash red" data-toggle="modal" data-target="#delete"></i></a></span>
+                                                    <div class="modal fade" id="delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="exampleModalLabel">Delete Order</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p>Are you sure want to delete?</p><br>
+                                                                    <a href="#" class="btn btn-danger">Delete</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="menu-qty-div12">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="quat-div">
+                                                        <span style="font-size: 12px">Qty</span>
+                                                        <select name="quantity" id="quantity" class="quantity" readonly>
+                                                            <option value="">2</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-7">
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="extra_item_1" value="True" {% if order_details.extra_item_1 == True%} checked {% endif %}>
+                                                            <label class="form-check-label" for="extra1">Extra Item</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="extra_item_2" value="True" {% if order_details.extra_item_2 == True%} checked {% endif %}>
+                                                            <label class="form-check-label" for="extra2">Extra Item</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        <div class="col" style=" border-right: 1px solid #d9d9d9;width:80px;">
+                            <h6 class="title-heading big red text-center">MENU</h6>
+                            <div class="row">
+                                <div class="col-8">
+                                    <input type="text" id="" class="form-control form-control-sm radius serch-div" placeholder="Enter Item">
+                                </div>
+                                <div class="col-4">
+                                    <a href="#" class="blue add_line_section"><i class="fa fa-plus blue"></i> Add Items</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-1">
+                                    <i class="fa fa-angle-left" style="font-size:22px;color:black" aria-hidden="true"></i>
+                                </div>
+                                <div class="col-10">
+                                    <div class="menu-item-nm" style="">
+                                        {% for section in all_food_section %}
+                                        <span><a href="#menu{{section.pk}}" class=" {% if section.pk == food_objects.pk %}active-nav1 {% endif %}">{{section.section_name}}</a></span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <i class="fa fa-angle-right" style="float:right;font-size:22px;color:black" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            <div class="order_detail_right_side_scroll" style="height:450px">
+                                {% for section in all_food_section %}
+                                <div style="padding-left:25px;padding-right:25px;">
+                                    <div class="menu-items-div scroll-div" id="menu{{section.pk}}">
+                                        <h6 class="red bold title-heading head">{{section.section_name}} <i class="fa fa-angle-right" style="float:right;margin-top:-2px;margin-left:10px;color:black;" aria-hidden="true" id="order-check1{{section.pk}}"></i><span class="veg-nv"><i class="fa fa-square green"></i> VEG <i class="fa fa-square nv"></i> NON VEG </span></h6>
+                                        <div class="total-menu-item-div">
+
+                                            <div id="order-div1{{section.pk}}" style="display: none">
+                                                {% for one in section.dishes_set.all %}
+                                                {% if one.is_active == True %}
+                                                <div class="menu-item-div1">
+                                                    <div class="row">
+                                                        <div class="col-8 mg0">
+                                                            <h6 class="item-name1 head1"><i class="fa fa-square  {% if one.dish_type == 1 %} green {% elif one.dish_type == 1 %} nv {% else %} {% endif %}"></i> {{one.dish_name}}</h6>
+                                                        </div>
+                                                        <div class="col-4 pd0">
+                                                            <span class="item-price red bold"><i class="fa fa-inr red" aria-hidden="true"></i> {{one.amount}} </span>&nbsp;&nbsp; <span> <input type="checkbox" value="{{one.pk}}" name="dish{{one.pk}}" id="order-ck{{one.pk}}"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="menu-qty-div" id="order-d{{one.pk}}" style="display: none">
+                                                    <div class="row">
+                                                        <div class="col-4">
+                                                            <div class="quat-div">
+                                                                <span style="font-size: 12px">Qty</span>
+                                                                <select name="quantity{{one.pk}}" id="quantity{{one.pk}}" class="quantity">
+                                                                    <option value="1">1</option>
+                                                                    <option value="2">2</option>
+                                                                    <option value="3">3</option>
+                                                                    <option value="4">4</option>
+                                                                    <option value="5">5</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        {% if one.dish_type != 3 %}
+                                                        <div class="col-8">
+                                                            <div class="extra-div-check">
+                                                                <div class="form-check form-check-inline" style="margin: 0;padding: 0">
+                                                                    <input class="form-check-input" type="checkbox" id="extra_item1{{one.pk}}" name="extra_item1{{one.pk}}" value="1">
+                                                                    <label class="form-check-label ex-label" for="ext1">{{one.extra_item_1}}</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline" style="margin: 0;padding: 0">
+                                                                    <input class="form-check-input" type="checkbox" id="extra_item2{{one.pk}}" name="extra_item2{{one.pk}}" value="1">
+                                                                    <label class="form-check-label" for="ext2">{{one.extra_item_2}}</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h6 class="title-heading big red text-center">ORDER DETAILS</h6>
+                            <div class="row">
+                                <div class="col-8">
+                                    <span class="title-heading red" style="float:left;">DELIVERY DETAILS</span>
+                                </div>
+                                <div class="col-4">
+
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-5">
+                                    <div class="cust-detail">
+                                        <h6>Full Name :</h6>
+                                        <h6>Mobile Number :</h6>
+                                        <h6>Delivery Address :</h6>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="cust-detail-right">
+                                        <h6 class="head-div" id="user-nm1"></h6>
+                                        <h6 class="head-div" id="user-mb1"></h6>
+                                        <h6 class="head-div" id="user-adrs1"></h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="title-heading red" style="float:left;margin-top:-10px;">ORDER DETAILS</span><br>
+
+                            <div class="total-menu-item-div">
+                                <div class="menu-item-div">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <h6 class="item-name head1"><i class="fa fa-square nv"></i> chou chou soup</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <span class="item-price red bold"><i class="fa fa-inr red" aria-hidden="true"></i> 100 </span>&nbsp;&nbsp; <span><a href="#"><i class="fa fa-trash red" data-toggle="modal" data-target="#delete"></i></a></span>
+                                            <div class="modal fade" id="delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel">Delete Order</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Are you sure want to delete?</p><br>
+                                                            <a href="#" class="btn btn-danger">Delete</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="menu-qty-div12">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="quat-div">
+                                                <span style="font-size: 12px">Qty</span>
+                                                <select name="" id="" class="quantity" readonly>
+                                                    <option value="">2</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="" value="True" {% if order_details.extra_item_1 == True%} checked {% endif %}>
+                                                    <label class="form-check-label" for="extra1">Extra Item</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="" value="True" {% if order_details.extra_item_2 == True%} checked {% endif %}>
+                                                    <label class="form-check-label" for="extra2">Extra Item</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-5">
+                                <div class="row">
+                                    <div class="col-5">
+                                        <div class="cust-detail">
+                                            <h6>Payment Method:</h6>
+                                            <h6>Item Selected:</h6>
+                                            <h6>Order Total Amount:</h6>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="cust-detail-right">
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="payment" id="online" value="1">
+                                                        <label class="form-check-label" for="online" style="font-size:12px"><b>ONLINE</b></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="payment" id="cash" value="2" checked>
+                                                        <label class="form-check-label" for="cash" style="font-size:12px"><b>CASH</b></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h6 class="head-div"> 3</h6>
+                                        <h6 class="head-div"><i class="fa fa-inr red" aria-hidden="true"></i> 100</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-sm green-btn radius mt-2 bold" style="width:80%">PAY AND PRINT</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $('#order-check1').click(function() {
+            if ($('#order-div').css('display') == 'none') {
+                $('#order-div').show();
+            } else {
+                $('#order-div').hide();
+            }
+        });
+
+    </script>
+    {% for section in all_food_section %}
+    {% for one in section.dishes_set.all %}
+    <script>
+        $(function() {
+            $('#order-ck{{one.pk}}').click(function() {
+                if ($(this).is(':checked')) {
+                    $('#order-d{{one.pk}}').show();
+                } else {
+                    $('#order-d{{one.pk}}').hide();
+                }
+            });
+        });
+
+    </script>
+    {% endfor %}
+    {% endfor %}
+
+    <script>
+        $('#search_mob').click(function() {
+            var mobile_num = $('#mobile_num').val();
+            console.log(mobile_num);
+            $('#mobile_no').val(mobile_num);
+            $('#mb-num').html(mobile_num);
+            $.ajax({
+                type: "GET",
+                url: "{% url 'orders:get_customer_detail' %}",
+                data: {
+                    'mobile_num': mobile_num
+                },
+                dataType: 'json',
+                success: function(data) {
+                    console.log(data)
+                    if (data.is_user == 1) {
+                        $('#full_name').val(data.user_name);
+                        $('#address').val(data.user_address);
+                        $('#ttl-order').html(data.total_order_count);
+                        $('#ttl-cancel').html(data.total_order_cancle);
+                        $('#ttl-sum').html(data.total_sum);
+                        $('#user-nm1').html(data.user_name);
+                        $('#user-mb1').html(data.user_mobile);
+                        $('#user-adrs1').html(data.user_address);
+                        $('#error_lable').hide();
+                        $('#mb-num').hide();
+                    } else {
+                        $('#full_name').val(data.user_name);
+                        $('#address').val(data.user_address);
+                        $('#ttl-order').html(data.total_order_count);
+                        $('#ttl-cancel').html(data.total_order_cancle);
+                        $('#ttl-sum').html(data.total_sum);
+                        $('#user-nm1').html(data.user_name);
+                        $('#user-mb1').html(data.user_mobile);
+                        $('#user-adrs1').html(data.user_address);
+                        $('#error_lable').show();
+                        $('#error_lable').html("NO SEARCH RESULT FOR : ");
+                        $('#mb-num').show();
+                    }
+                }
+            });
+        });
+
+    </script>
+
+    {% for section in all_food_section %}
+    <script>
+        $('#order-check1{{section.pk}}').click(function() {
+            if ($('#order-div1{{section.pk}}').css('display') == 'none') {
+                $('#order-div1{{section.pk}}').show();
+            } else {
+                $('#order-div1{{section.pk}}').hide();
+            }
+        });
+
+    </script>
+    {% endfor %}
+</body>
+
+</html>

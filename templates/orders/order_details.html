@@ -1,0 +1,261 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block headscript %}
+{% endblock headscript %}
+
+{% block content %}
+<div class="main">
+    <h6 class="title-heading big red">ORDER DETAIL : <u class="blue">{{order_details.order_id}}</u></h6>
+    <div class="container">
+        <div class="row">
+            <div class="col-6" style=" border-right: 1px solid #d9d9d9;">
+                <div class="left-side-div">
+                    <h6 class="title-heading red text-center">CUSTOMER DETAILS</h6>
+
+                    <div class="menu-items-div">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="cust-detail">
+                                    <h6 class="">Full Name :</h6>
+                                    <h6 class="">Mobile Number :</h6>
+                                    <h6>Delivery Address :</h6>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="cust-detail-right">
+                                    <h6>{{order_details.customer_id.full_name}}</h6>
+                                    <h6>{{order_details.customer_id.custom_user_id.username}}</h6>
+                                    <h6>{{order_details.customer_id.address}}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="{% url 'orders:existing_order_update' outlet_objects.pk order_details.pk %}">
+                        {% csrf_token %}
+                        <h6 class="title-heading red text-center">ORDER DETAILS <span style="float: right">{% if order_details.order_status != 2 %}<button class="btn btn-sm  radius" style="font-size: 16px"><i class="fa fa-save"></i></button>{% endif %}</span></h6>
+                        <br>
+                        {% for one in all_orders_details %}
+                        <div class="total-menu-item-div">
+                            <div class="menu-item-div">
+                                <div class="row">
+                                    <div class="col-9">
+                                        <h6 class="item-name"><i class="fa fa-square  {% if one.dish_id.dish_type == 2 %}nv{% else %}green{% endif %}"></i> {{one.dish_id.dish_name}}</h6>
+                                        <input type="hidden" value="{{one.dish_id.pk}}" name="dish{{one.pk}}" id="order_dish{{one.pk}}">
+                                    </div>
+                                    <div class="col-3">
+                                        <span class="item-price red bold"><i class="fa fa-inr red" aria-hidden="true"></i> {{one.dish_id.amount}} </span>&nbsp;&nbsp; <span>{% if order_details.order_status != 2 %}<a href="{% url 'orders:delete_one_item_from_order' outlet_objects.pk one.pk %}"><i class="fa fa-trash red"></i></a>{% endif %}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="menu-qty-div">
+                                <div class="row">
+                                    <div class="col-5">
+                                        <div class="quat-div">
+                                            <span style="font-size: 12px">Qty</span>
+                                            <select name="quantity{{one.pk}}" id="quantity{{one.pk}}" class="quantity">
+                                                <option value="1" {% if one.quantity == 1 %}selected{% endif %}>1</option>
+                                                <option value="2" {% if one.quantity == 2 %}selected{% endif %}>2</option>
+                                                <option value="3" {% if one.quantity == 3 %}selected{% endif %}>3</option>
+                                                <option value="4" {% if one.quantity == 4 %}selected{% endif %}>4</option>
+                                                <option value="5" {% if one.quantity == 5 %}selected{% endif %}>5</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    {% if one.dish_id.dish_type != 3 %}
+                                    <div class="col-7">
+                                        <div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="extra_item1{{one.pk}}" name="extra_item1{{one.pk}}" value="{% if one.extra_item_1 == True %} 1 {% else %} 0 {% endif %}" {% if one.extra_item_1 == True %} checked {% endif %}>
+                                                <label class="form-check-label" for="extra1">{{one.dish_id.extra_item_1}}</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="extra_item2{{one.pk}}" name="extra_item2{{one.pk}}" value="{% if one.extra_item_2 == True %} 1 {% else %} 0 {% endif %}" {% if one.extra_item_2 == True %} checked {% endif %}>
+                                                <label class="form-check-label" for="extra_item_2">{{one.dish_id.extra_item_2}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </form>
+
+                    <div class="menu-items-div mt-4">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="cust-detail">
+                                    <h6 class="">Order Status:</h6>
+                                    <h6 class="">Payment Method:</h6>
+                                    <h6 class="">Item Selected :</h6>
+                                    <h6>Your Order Total :</h6>
+                                    <h6>Addon Difference :</h6>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="cust-detail-right">
+                                    {% if order_details.order_status == 1 %}
+                                    <h6>Pending</h6>
+                                    {% elif order_details.order_status == 2 %}
+                                    <h6 style="color:#ff0000">CANCLE</h6>
+                                    {% elif order_details.order_status == 3 %}
+                                    <h6 class="green">COMPLETE</h6>
+                                    {% elif order_details.order_status == 4 %}
+                                    <h6 class="green">DELIVERY</h6>
+                                    {% endif %}
+
+                                    {% if order_details.payment_type == 1 %}
+                                    <h6>ONLINE</h6>
+                                    {% else %}
+                                    <h6>CASH</h6>
+                                    {% endif %}
+                                    <h6>{{total_item}}</h6>
+                                    <h6><i class="fa fa-inr red" aria-hidden="true"></i> {{order_details.total_bill}}</h6>
+                                    <h6><i class="fa fa-inr red" aria-hidden="true"></i> -</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-6">
+                <form method="POST" action="{% url 'orders:add_new_items_existing_order' outlet_objects.pk order_details.pk %}">
+                    {% csrf_token %}
+                    {% if order_details.order_status != 2 %}
+                    <div class="right-side-div">
+                        <h6 class="title-heading big red text-center">MENU <span style="float: right"><button type="submit" style="font-size: 10px" class="btn btn-sm green-btn radius">ADD</button></span></h6>
+                            <div class="menu-nav-bar-div">
+                                <div class="row">
+                                    <div class="col-1">
+                                        <i class="fa fa-angle-left" style="font-size:22px;color:black" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="col-10">
+                                        <div class="menu-item-nm">
+                                            {% for section in all_food_section %}
+                                            <span><a href="#menu{{section.pk}}">{{section.section_name}}</a></span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="col-1">
+                                        <i class="fa fa-angle-right" style="font-size:22px;color:black" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <div class="order_detail_right_side_scroll">
+                            {% for section in all_food_section %}
+                            {% if section.is_active == True %}
+                            <div style="padding-left:30px;padding-right:30px;" id="menu{{section.pk}}">
+                                <div class="menu-items-div">
+                                    <h6 class="red bold title-heading">{{section.section_name}}  <i class="fa fa-angle-right" style="float:right;margin-top:-2px;margin-left:10px;color:black;" aria-hidden="true" id="order-check{{section.pk}}"></i><span class="veg-nv"><i class="fa fa-square green"></i> VEG <i class="fa fa-square nv"></i> NON VEG </span></h6>
+
+                                    <div id="order-div{{section.pk}}" style="display: none">
+                                        <div class="total-menu-item-div">
+                                            {% for one in section.dishes_set.all %}
+                                            {% if one.is_active == True %}
+                                            <div class="menu-item-div1">
+                                                <div class="row">
+                                                    <div class="col-9 mg0">
+                                                        <h6 class="item-name1"><i class="fa fa-square {% if one.dish_type == 2 %}nv{% elif one.dish_type == 1 %}green{% else %}{% endif %}"></i> {{one.dish_name}}</h6>
+                                                    </div>
+                                                    <div class="col-3 pd0">
+                                                        <span class="item-price red bold"><i class="fa fa-inr red" aria-hidden="true"></i> {{one.amount}} </span>&nbsp;&nbsp; <span> <input type="checkbox" value="{{one.pk}}" name="dish{{one.pk}}" id="order-ck1{{one.pk}}"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="menu-qty-div" id="order-d1{{one.pk}}" style="display: none">
+                                                <div class="row">
+                                                    <div class="col-5">
+                                                        <div class="quat-div">
+                                                            <span style="font-size: 12px">Qty</span>
+                                                            <select name="quantity{{one.pk}}" id="quantity{{one.pk}}" class="quantity">
+                                                                <option>1</option>
+                                                                <option>2</option>
+                                                                <option>3</option>
+                                                                <option>4</option>
+                                                                <option>5</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    {% if one.dish_type != 3 %}
+                                                    <div class="col-7">
+                                                        <div class="extra-div-check">
+                                                            {% if one.extra_item_1 != "" %}
+                                                            <div class="form-check form-check-inline" style="margin: 0;padding: 0">
+                                                                <input class="form-check-input" type="checkbox" id="extra1{{one.pk}}" name="extra1{{one.pk}}" value="1">
+                                                                <label class="form-check-label ex-label" for="ext1">{{one.extra_item_1}}</label>
+                                                            </div>
+                                                            {% endif %}
+                                                            {% if one.extra_item_2 != "" %}
+                                                            <div class="form-check form-check-inline" style="margin: 0;padding: 0">
+                                                                <input class="form-check-input" type="checkbox" id="extra2{{one.pk}}" name="extra2{{one.pk}}" value="1">
+                                                                <label class="form-check-label" for="ext2">{{one.extra_item_2}}</label>
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block extrascript %}
+{% for section in all_food_section %}
+{% for one in section.dishes_set.all %}
+<script>
+    $(function() {
+        $('#order-ck1{{one.pk}}').click(function() {
+            if ($(this).is(':checked')) {
+                $('#order-d1{{one.pk}}').show();
+            } else {
+                $('#order-d1{{one.pk}}').hide();
+            }
+        });
+    });
+
+</script>
+{% endfor %}
+{% endfor %}
+
+{% for section in all_food_section %}
+<script>
+    $('#order-check{{section.pk}}').click(function() {
+        if ($('#order-div{{section.pk}}').css('display') == 'none') {
+            $('#order-div{{section.pk}}').show();
+        } else {
+            $('#order-div{{section.pk}}').hide();
+        }
+    });
+
+</script>
+{% endfor %}
+{% endblock %}

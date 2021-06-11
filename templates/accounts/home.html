@@ -1,0 +1,67 @@
+{% extends 'dashboard/web_dash.html' %}
+{% load static %}
+
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block headscript %}
+{% endblock headscript %}
+
+
+{% block content %}
+    <div class="index-page-main">
+            
+        <div class="index-pg-two">
+            <div class="index-page-div">
+                <h6 class="index-pg-line">Vikhroli’s oldest & finest <br> Chinese Restaurant<br> since 1996!</h6>
+            </div>
+            <div class="container">
+
+            <center>
+            {% for one in outlet_objects %}
+                <div class="index-page-div1">
+                    <div class="card card-div">
+                        <img class="card-img-top" src="media/outlet/{{one.outlet_image}}" style="height:170px;padding:3px" alt="Card image cap">
+                        <div class="card-body" style="margin-top:-8px">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-head" style="margin-top: -8px">{{one.outlet_name}} <br><span class="card-head1"> {{one.outlet_location  }}</span></h5>
+                                </div>
+                                <div class="col-4">
+                                    <a href="{% url 'dishes:menu' one.pk %}" class="btn bt-sm order-btn" style="margin-right:10px;width:60px;margin-top: -8px">ORDER<br> NOW</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                {% endfor %}
+               </center> 
+                
+                {% comment %} <div class="index-page-div1">
+                    <div class="card card-div">
+                        <img class="card-img-top" src="{% static 'images/kailas_complex.png' %}" style="height:170px;padding:3px" alt="Card image cap">
+                        <div class="card-body" style="margin-top:-8px">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-head" style="margin-top: -8px">KAILASH COMPLEX <br><span class="card-head1"> VIKHROLI(W)</span></h5>
+                                </div>
+                                <div class="col-4">
+                                    <center><a href="{% url 'dishes:menu' %}" class="btn btn-sm order-btn" style="margin-right:10px;width:60px;margin-top: -8px">ORDER<br> NOW</a></center>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> {% endcomment %}
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block extrascript %}
+{% endblock %}

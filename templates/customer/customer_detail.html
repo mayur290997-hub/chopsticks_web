@@ -1,0 +1,241 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block headscript %}
+{% endblock headscript %}
+
+
+{% block content %}
+<div class="main">
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-6" style="border-right: 1px solid #d9d9d9">
+                <div class="left-side-div">
+                <form action="{% url 'customer:update_customer' outlet_objects.pk all_customer.pk %}" method="POST">
+                {% csrf_token %}
+                    <h6 class="title-heading red big">CUSTOMER DETAILS
+                        <span style="float: right;color:black"> <button type="submit" class="btn btn-sm "><i class="fa fa-floppy-o" aria-hidden="true"></i></button></span>
+                    </h6>
+                    <div class="menu-items-div">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="cust-detail">
+                                    <h6 style="margin-top:3px">Full Name :</h6>
+                                    <h6 style="margin-top:12px">Mobile Number :</h6>
+                                    <h6 style="margin-top:12px">Email ID :</h6>
+                                    <h6 style="margin-top:12px"> Address :</h6>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="cust-detail-right">
+                                    <h6><input type="text" class="form-control form-control-sm radius" style="height:20px;" name="full_name" value="{{all_customer.full_name}}"></h6>
+                                    <h6><input type="text" class="form-control form-control-sm radius" style="height:20px;" name="mobile_no" value="{{all_customer.custom_user_id.mobile_no}}"></h6>
+                                    <h6><input type="text" class="form-control form-control-sm radius" style="height:20px;" name="email" value="{{all_customer.custom_user_id.email}}"></h6>
+                                    <h6><input type="text" class="form-control form-control-sm radius" style="height:20px;" name="address" value="{{all_customer.address}}"></h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                    {% if order_details %}
+                    <div class="menu-items-div mt-3" style="height:430px;">
+                        <div class="row text-center">
+                            <div class="col">
+                                <h6 class="cust-label gray">TOTAL ORDERS</h6>
+                                <h6 class="cust-label-dw red bold">{{total_order_count}}</h6>
+                            </div>
+                            <div class="col">
+                                <h6 class="cust-label gray">TOTAL CANCELS</h6>
+                                <h6 class="cust-label-dw red bold">{{total_order_cancle}}</h6>
+                            </div>
+                            <div class="col">
+                                <h6 class="cust-label gray">TOTAL SALES</h6>
+                                <h6 class="cust-label-dw red bold"><i class="fa fa-inr red" aria-hidden="true"></i>{{sum}}</h6>
+                            </div>
+                        </div>
+                        <div style="overflow-y:scroll;overflow-x:hidden;">
+                            {% for order in order_details %}
+                            <div class="total-menu-item-div">
+                                <div class="menu-item-div" style="width:81%;margin: 0 auto;">
+                                    <div class="row">
+                                        <div class="col-9">
+                                            <h6 class="item-name">Order Date: <span class="red bold">{{ order.created_at|date:"d M Y" }}</span></h6>
+                                        </div>
+                                        <div class="col-3">
+                                            <span class="item-price red bold"><i class="fa fa-inr red" aria-hidden="true"></i> {{order.total_bill}} </span>&nbsp;&nbsp; <span> <i class="fa fa-angle-right" id="order-check1{{order.pk}}"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <center>
+                            <p style="color:#ff0000 ;margin-top:50px">NO ORDERS PLACED YET</p>
+                        </center>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if order_details %}
+            <div class="col-6">
+                
+                
+            <div class="right-side-div">
+                <h6 class="title-heading red big">ORDER DETAILS<a href="{% url 'customer:customer_master' outlet_objects.pk %}" class="btn btn-sm btn-info" style="float:right;margin-left:5px;"><i class="fa fa-angle-left" aria-hidden="true"></i></a> <a href="#" class="btn btn-sm btn-warning radius" style="float:right;">PRINT</a></h6>
+                <span class="title-heading red">DELIVERY DETAILS</span>
+                {% for order in order_details %}
+                    <div id="order-div{{order.pk}}" style="display:none">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="cust-detail">
+                                    <h6>Full Name :</h6>
+                                    <h6>Mobile Number :</h6>
+                                    <h6>Delivery Address :</h6>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="cust-detail-right">
+                                    <h6>{{order.customer_id.full_name}}</h6>
+                                    <h6>{{order.customer_id.custom_user_id.mobile_no}}</h6>
+                                    <h6>{{order.order_delivery_address}}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="overflow-y:scroll;overflow-x:hidden;">
+                            <div class="menu-items-div mt-2" style="height:380px" >
+                                <div class="total-menu-item-div" >
+                                {% for one in order.customer_order_detail_set.all %}
+                                    <div class="menu-item-div">
+                                        <div class="row">
+                                            <div class="col-8">
+                                                <h6 class="item-name"><i class="fa fa-square {% if one.dish_id.dish_type == 2 %} nv{% else %}green{% endif %}"></i> {{one.dish_id.dish_name}}</h6>
+                                            </div>
+                                            <div class="col-4">
+                                                <span class="item-price red bold"><i class="fa fa-inr red" aria-hidden="true"></i> {{one.amount}} </span>&nbsp;&nbsp; <span><a href="#"><i class="fa fa-trash red" data-toggle="modal" data-target="#delete{{one.pk}}"></i></a></span>
+                                                <div class="modal fade" id="delete{{one.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLabel">Delete Order</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>Are you sure want to delete?</p><br>
+                                                                <a href="{% url 'customer:delete_order' outlet_objects.pk one.pk %}" class="btn btn-danger">Delete</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="menu-qty-div">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="quat-div">
+                                                    <span style="font-size: 14px">Qty</span>
+                                                    <select name="quantity" id="quantity" class="quantity" readonly>
+                                                        <option value="{{one.pk}}">{{one.quantity}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-7">
+                                                <div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox" id="extra_item_1" value="True" {% if one.extra_item_1 == True%} checked {% endif %}>
+                                                        <label class="form-check-label" for="extra1">Extra Item</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox" id="extra_item_2" value="True" {% if one.extra_item_2 == True%} checked {% endif %}>
+                                                        <label class="form-check-label" for="extra2">Extra Item</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-5">
+                                    <div class="cust-detail">
+                                        <h6>Payment Method:</h6>
+                                        <h6>Payment Status:</h6>
+                                        <h6>Order Total Amount:</h6>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="cust-detail-right">
+                                        {% if order.payment_type == 1 %}
+                                        <h6>ONLINE</h6>
+                                        {% else %}
+                                        <h6>CASH</h6>
+                                        {% endif %}
+                                        {% if order.order_status == 1 %}
+                                        <h6>Pending</h6>
+                                        {% elif order.order_status == 2 %}
+                                        <h6>CANCLE</h6>
+                                        {% elif order.order_status == 3 %}
+                                        <h6>COMPLETE</h6>
+                                        {% elif order.order_status == 4 %}
+                                        <h6>DELIVERY</h6>
+                                        {% endif %}
+                                        <h6><i class="fa fa-inr red" aria-hidden="true"></i> {{order.total_bill}}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $('#table_id').DataTable();
+    });
+
+</script>
+{% endblock %}
+
+{% block extrascript %}
+<script>
+    {% for order in order_details %}
+    $('#order-check1{{order.pk}}').click(function() {
+        if ($('#order-div{{order.pk}}').css('display') == 'none') {
+            $('#order-div{{order.pk}}').show();
+        } else {
+            $('#order-div{{order.pk}}').hide();
+        }
+    }); 
+    
+    {% endfor %}
+
+</script>
+
+<script>
+
+$(".showDesc").click(function() {
+  var $target = $(this).closest('.feedContainer').next(".descContainer").toggleClass("show");
+  $(".descContainer").not($target).removeClass('show'); // hide other open elements
+});
+</script>
+
+{% endblock %}

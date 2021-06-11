@@ -1,0 +1,263 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block headscript %}
+{% endblock headscript %}
+
+
+{% block content %}
+<div class="main">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <input type="text" name="" id="" class="form-control form-control-sm radius" placeholder="SEARCH ITEM IN ALL SECTIONS ">
+            </div>
+            <div class="col">
+                <button class="btn btn-sm search-btn radius">SEARCH</button>
+            </div>
+            <div class="col-2">
+                <a href="{% url 'food_section:food_section_master' outlet_objects.pk %}" class="red add_section"><i class="fa fa-plus red"></i> ADD SECTION </a>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col">
+                <div class="tabs-div">
+                    {% for one in food_section1 %}
+                    <a href="{% url 'dishes:all_dishes' outlet_objects.pk one.pk %}" class="tabs {% if one.pk == food_objects.pk %} active-tab{% else %}inactive-tab{% endif %}">{{one.section_name}}</a> &nbsp;&nbsp;&nbsp;&nbsp;
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container ">
+        <div class="row">
+            <div class="col">
+            </div>
+            <div class="col-2">
+                <a href="#" class="blue add_line_section" data-toggle="modal" data-target="#Add_dishes"><i class="fa fa-plus blue"></i> ADD FOOD ITEM </a>
+            </div>
+        </div>
+    </div>
+
+    {% if error_msg %}
+    <p style="color:#ff0000">{{error_msg}}</p>
+    {% endif %}
+
+    <div class="modal fade" id="Add_dishes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Dishes</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        {% comment %} <span aria-hidden="true">&times;</span> {% endcomment %}
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'dishes:add_dishes' outlet_objects.pk food_objects.pk %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Dish Type :</label>
+                            <select name="dish_type" id="dish_type" class="form-control form-control-sm" required>
+                                <option value="1">VEG</option>
+                                <option value="2">NON-VEG</option>
+                                <option value="3">NONE</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Dish Name :</label>
+                            <input type="text" class="form-control form-control-sm" id="dish_name" name="dish_name" placeholder="Enter Dish Name" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                            <label for="exampleInputEmail1">Qantity :</label>
+                            <input type="number" class="form-control form-control-sm" id="quantity" name="quantity" value="1"  placeholder="Enter Qantity" required>
+                        </div>
+
+                        <div class="col">
+                            <label for="exampleInputEmail1">Amount :</label>
+                            <input type="number" class="form-control form-control-sm" id="amount" name="amount" placeholder="Enter Amount" required>
+                        </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                                <label for="exampleInputEmail1">Extra Item 1 :</label>
+                                <input type="text" class="form-control form-control-sm" id="extra_item_1" name="extra_item_1" placeholder="Extra Item 1" >
+                            </div>
+                            <div class="col">
+                                <label for="exampleInputEmail1">Cost Extra Item 1 :</label>
+                                <input type="number" class="form-control form-control-sm" id="extra_item_cost_1" name="extra_item_cost_1" placeholder="Cost Extra Item 1">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                                <label for="exampleInputEmail1">Extra Item 2 :</label>
+                                <input type="text" class="form-control form-control-sm" id="extra_item_2" name="extra_item_2" placeholder="Extra Item 2 ">
+                            </div>
+                            <div class="col">
+                                <label for="exampleInputEmail1">Cost Extra Item 2 :</label>
+                                <input type="number" class="form-control form-control-sm" id="extra_item_cost_2" name="extra_item_cost_2" placeholder="Cost Extra Item 2" >
+                            </div>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary">ADD NEW DISH</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <div>
+                    <table id="table_id" class="display table-bordered table-sm" style="width: 100%;;font-size: 12px">
+                        <thead>
+                            <tr>
+                                <th>Sr. No.</th>
+                                <th>Type</th>
+                                <th>Dish Name</th>
+                                <th>Qty</th>
+                                <th>Amount</th>
+                                <th>Extra Item #1</th>
+                                <th>Extra Cost #1</th>
+                                <th>Extra Item #2</th>
+                                <th>Extra Cost #2</th>
+                                <th>Is Active</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for one in all_dish %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                {% if one.dish_type == 1 %}
+                                <td>Veg</td>
+                                {% elif one.dish_type == 2 %}
+                                <td>Non-Veg</td>
+                                {% else %}
+                                <td>None</td>
+                                {% endif %}
+                                <td>{{one.dish_name}}</td>
+                                <td>{{one.quantity}}</td>
+                                <td><i class="fa fa-inr red" aria-hidden="true"></i><span class="red"> {{one.amount}}</span></td>
+                                <td>{{one.extra_item_1}}</td>
+                                <td><i class="fa fa-inr red" aria-hidden="true"></i><span class="red"> {{one.extra_item_cost_1}}</td>
+                                <td>{{one.extra_item_2}}</td>
+                                <td><i class="fa fa-inr red" aria-hidden="true"></i><span class="red"> {{one.extra_item_cost_2}}</span></td>
+                                <td>{% if one.is_active == True %}Active{% else %}Inactive{% endif %}</td>
+                                <td><i class="fa fa-pencil" data-toggle="modal" data-target="#update{{one.pk}}"></i> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <i class="fa fa-trash" aria-hidden="true" data-toggle="modal" data-target="#delete{{one.pk}}"></i></td>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="update{{one.pk}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Update Dish</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{% url 'dishes:update_dish' outlet_objects.pk food_objects.pk one.pk %}" method="POST">
+                                                    {% csrf_token %}
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Dish Type :</label>
+                                                        <select name="dish_type" id="dish_type" class="form-control form-control-sm" >
+                                                            <option value="1" {% if one.dish_type == 1 %} selected {% endif %}>VEG</option>
+                                                            <option value="2" {% if one.dish_type == 2 %} selected {% endif %}>NON-VEG</option>
+                                                            <option value="3" {% if one.dish_type == 3 %} selected {% endif %}>NONE</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Dish Name :</label>
+                                                        <input type="text" class="form-control form-control-sm" id="dish_name" value="{{one.dish_name}}" name="dish_name" placeholder="Enter Dish Name" >
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="col">
+                                                        <label for="exampleInputEmail1">Qantity :</label>
+                                                        <input type="number" class="form-control form-control-sm" id="quantity" name="quantity" value="{{one.quantity}}" placeholder="Enter Qantity">
+                                                    </div>
+
+                                                    <div class="col">
+                                                        <label for="exampleInputEmail1">Amount :</label>
+                                                        <input type="number" class="form-control form-control-sm" id="amount" name="amount" value="{{one.amount}}" placeholder="Enter Amount">
+                                                    </div>
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="col">
+                                                            <label for="exampleInputEmail1">Extra Item 1 :</label>
+                                                            <input type="text" class="form-control form-control-sm" id="extra_item_1" value="{{one.extra_item_1}}" name="extra_item_1" placeholder="Extra Item 1" >
+                                                        </div>
+                                                        <div class="col">
+                                                            <label for="exampleInputEmail1">Extra Item 1 Cost :</label>
+                                                            <input type="text" class="form-control form-control-sm" id="extra_item_cost_1" value="{{one.extra_item_cost_1}}" name="extra_item_cost_1" placeholder="Extra Item 1 Cost" >
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-row">
+                                                        <div class="col">
+                                                            <label for="exampleInputEmail1">Extra Item 2 :</label>
+                                                            <input type="text" class="form-control form-control-sm" id="extra_item_2" value="{{one.extra_item_2}}" name="extra_item_2" placeholder="Extra Item 2" >
+                                                        </div>
+                                                        <div class="col">
+                                                            <label for="exampleInputEmail1">Extra Item 2 Cost :</label>
+                                                            <input type="text" class="form-control form-control-sm" id="extra_item_cost_2" value="{{one.extra_item_cost_2}}" name="extra_item_cost_2" placeholder="Extra Item 2 Cost" >
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <button type="submit" class="btn btn-primary">UPDATE</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade" id="delete{{one.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">{% if one.is_active == True %}Inactive{% else %}Active{% endif %} Dish</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure want to {% if one.is_active == True %}Inactive{% else %}Active{% endif %} <b>{{one.dish_name}}</b>?</p><br>
+                                                <a href="{% url 'dishes:delete_dish' outlet_objects.pk food_objects.pk one.pk %}" class="btn {% if one.is_active == True %}btn-danger{% else %}btn-primary{% endif %}">{% if one.is_active == True %}Inactive{% else %}Active{% endif %}</a>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $('#table_id').DataTable();
+    });
+
+</script>
+{% endblock %}
+
+{% block extrascript %}
+{% endblock %}

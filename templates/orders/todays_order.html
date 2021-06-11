@@ -1,0 +1,180 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% load item_counts %}
+
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block headscript %}
+{% endblock headscript %}
+
+{% block content %}
+<div class="main">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <input type="text" name="" id="" class="form-control form-control-sm radius" placeholder="Enter Name ,Mobile Or Item">
+            </div>
+            <div class="col">
+                <button class="btn btn-sm search-btn radius">SEARCH</button>
+            </div>
+
+            <div class="col-2">
+                <a href="{% url 'orders:new_order' outlet_objects.pk %}" target="_blank" class="btn btn-sm green-btn radius"><b> <i class="fa fa-plus" aria-hidden="true"></i> NEW ORDER</b> </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <div class="tabs-div">
+                    <a href="{% url 'orders:today_order' outlet_objects.pk %}" class="tabs active-tab">TODAY </a> &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="{% url 'orders:order_master' outlet_objects.pk %}" class="tabs  inactive-tab">ALL ORDERS </a> &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="{% url 'orders:order_cancle' outlet_objects.pk %}" class="tabs inactive-tab">CANCELLED ORDERS</a> &nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <label for="today_date" class="date"> Today's Date : <small class="date-div" id="demo"></small></label>
+            </div>
+            <div class="col">
+                <label for="current_time" class="date">Current Time :<small class="date-div" id="time"></small> </label>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col" style="margin: 0px;padding: 0px;">
+                        <label for="today_date" class="date1">TOTAL PENDING<br>{{total_pending}}</label>
+                    </div>
+                    <div class="col" style="margin: 0px;padding: 0px;">
+                        <label for="today_date" class="date1"> TOTAL COMPLETE<br>{{total_complete}} </label>
+                    </div>
+                    <div class="col" style="margin: 0px;padding: 0px;">
+                        <label for="today_date" class="date1"> TOTAL CANCEL<br>{{total_cancle}} </label>
+                    </div>
+                    <div class="col" style="margin: 0px;padding: 0px;">
+                        <label for="today_date" class="date2"> TOTAL <br>SALES <br> <i class="fa fa-inr red" aria-hidden="true"></i> <span class="red">{{sum}}</span> </label>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container ">
+        <div class="row">
+            <div class="col">
+                <div>
+                    <table id="table_id" class="display table-bordered table-sm" style="width: 100%;;font-size: 12px">
+                        <thead>
+                            <tr>
+                                <th>Order Id</th>
+                                <th>Customer Mobile</th>
+                                <th>Order Time</th>
+                                <th>Customer Name</th>
+                                <th>Item</th>
+                                <th>Total Bill</th>
+                                <th>Payment</th>
+                                <th>Orders Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for one in all_orders %}
+                            <tr>
+                                <td><a href="{% url 'orders:order_details' outlet_objects.pk one.pk %}">{{one.order_id}}</a></td>
+                                <td><input type="checkbox" id="" name=""> {{one.customer_id.custom_user_id.mobile_no}}</td>
+                                <!--<td><input type="checkbox" id="" name=""></td>-->
+                                <td>{{one.created_at|time:"h:i:s A"}}</td>
+                                <td>{{one.customer_id.full_name}}</td>
+                                <td>{{item_count|get_item:one.pk}}</td>
+                                <td><i class="fa fa-inr red" aria-hidden="true"></i><span class="red"> {{one.total_bill}}</span></td>
+                                {% if one.payment_type == 1 %}
+                                <td>ONLINE</td>
+                                {% else %}
+                                <td>CASH</td>
+                                {% endif %}
+                                <form action="{% url 'orders:update_status' outlet_objects.pk  one.pk %}" method="POST">
+                                {% csrf_token %}
+                                <td>
+                                    <select name="order_status" id="order_status" class=" {% if one.order_status == 1 %}orange {% elif one.order_status == 4 %} blue {% elif one.order_status == 2 %} red {% elif one.order_status == 3 %} green {%endif%}select-div">
+                                        <option value="1" class="orange" {% if one.order_status == 1 %} selected {%endif%}><span>PENDING</span></option>
+                                        <option value="4" class="blue" {% if one.order_status == 4 %} selected {%endif%}><span>DELIVERY</span></option>
+                                        <option value="2" class="red" {% if one.order_status == 2 %} selected {%endif%}><span>CANCLE</span></option>
+                                        <option value="3" class="green" {% if one.order_status == 3 %} selected {%endif%}><span>COMPLETE</span></option>
+                                    </select>
+                                </td>
+                                <td><center><button type="submit" class="btn-primary"><i class="fa fa-save"></i></button></center></td>
+                                </form>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block script %}
+
+    <script>
+        $(document).ready(function() {
+            $('#table_id').DataTable();
+        });
+
+    </script>
+    {% endblock %}
+
+    {% block extrascript %}
+    <script>
+        $(function() {
+            $('#order-check1').click(function() {
+                if ($(this).is(':checked')) {
+                    $('#order-div1').show();
+                } else {
+                    $('#order-div1').hide();
+                }
+            });
+
+            $('#order-check2').click(function() {
+                if ($(this).is(':checked')) {
+                    $('#order-div2').show();
+                } else {
+                    $('#order-div2').hide();
+                }
+            });
+
+            $('#order-check3').click(function() {
+                if ($(this).is(':checked')) {
+                    $('#order-div3').show();
+                } else {
+                    $('#order-div3').hide();
+                }
+            });
+
+            $('#order-check4').click(function() {
+                if ($(this).is(':checked')) {
+                    $('#order-div4').show();
+                } else {
+                    $('#order-div4').hide();
+                }
+            });
+        });
+
+    </script>
+    <script>
+        var d = new Date();
+        var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+
+        document.getElementById("demo").innerHTML = d.toDateString();
+        document.getElementById("time").innerHTML = time;
+    </script>
+
+    {% endblock %}

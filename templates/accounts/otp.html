@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <title>Chopssticks-OTP</title>
+    <style>
+        input[type="text"] {
+            font-size: 14px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+        }
+
+        input {
+            height: 35px;
+            width: 50px;
+            text-align: center;
+            border: 1px solid #d9d9d9;
+            background: #f5f4f4;
+            margin-left: 15px;
+            border-radius: 7px;
+        }
+
+        input:focus {
+            outline: none;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="">
+        <section class="" style="height:100vh">
+            <div class="login-web-box">
+                <div class="login-top_div1">
+                    <a href="{% url 'accounts:web_login' %}" style="color:#000"><i class="fa fa-angle-left"></i> BACK</a>
+                </div>
+                <form action="{% url 'accounts:user_otp' user.pk %}" method="POST" autocomplete="off">
+                    {% csrf_token %}
+                    <div class="">
+                        <div style="padding-top:70px">
+                            <p class="label-class">We have sent a 4 digit OTP to <br>the following number provided:</p>
+                            <p class="red bold number-class">{{user.mobile_no}}</p>
+                            <p class="label-class">Please enter OTP below.</p>
+                            <p class="red">{% if erroe_msg %}{{erroe_msg}}{% endif %}</p>
+                            <br>
+                            <div class="form-group">
+                                <div style="display: flex;justify-content: center" id="otp-container">
+                                    <input oninput="inputInsideOtpInput(this)" maxlength="1" style="width:20%;height:45px;font-weight: bold;font-size:18px;" type="number" name="otp1" id="otp1" required pattern="[0-9]{1}" onkeypress="return onlyNumberKey(event)">
+
+                                    <input oninput="inputInsideOtpInput(this)" maxlength="1" style="width:20%;height:45px;font-weight: bold;font-size:18px;" type="number" name="otp2" id="otp2" required pattern="[0-9]{1}" onkeypress="return onlyNumberKey(event)">
+
+                                    <input oninput="inputInsideOtpInput(this)" maxlength="1" style="width:20%;height:45px;font-weight: bold;font-size:18px;" type="number" name="otp3" id="otp3" required pattern="[0-9]{1}" onkeypress="return onlyNumberKey(event)">
+
+                                    <input oninput="inputInsideOtpInput(this)" maxlength="1" style="width:20%;height:45px;font-weight: bold;font-size:18px;" type="number" name="otp4" id="otp4" required pattern="[0-9]{1}" onkeypress="return onlyNumberKey(event)">
+                                </div>
+                            </div>
+
+                            <center>
+                                <input type="hidden" id="mobile_no" name="mobile_no" value="{{mobile_no}}"><br>
+                                <button type="submit" class="btn btn-sm a" style="font-size: 12px;background-color:#01e55a;color: #fff;width: 40%">submit</button>
+                            </center>
+                        </div>
+                    </div>
+                </form>
+                <center>
+                    <br><br>
+                    <a href="#" class="links">RESEND OTP</a>
+                    <br><br>
+                    <a href="#" class="links">CHANGE NUMBER</a>
+                </center>
+            </div>
+        </section>
+    </div>
+    <script>
+    function onlyNumberKey(evt) {
+
+        // Only ASCII charactar in that range allowed
+        var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+        if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+            return false;
+        return true;
+    }
+
+</script>
+<script>
+        function inputInsideOtpInput(el) {
+            if (el.value.length > 1) {
+                el.value = el.value[el.value.length - 1];
+            }
+            try {
+                if (el.value == null || el.value == "") {
+                    this.foucusOnInput(el.previousElementSibling);
+                } else {
+                    this.foucusOnInput(el.nextElementSibling);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function foucusOnInput(ele) {
+            ele.focus();
+            let val = ele.value;
+            ele.value = "";
+            // ele.value = val;
+            setTimeout(() => {
+                ele.value = val;
+            })
+        }
+    </script>
+</body>
+
+</html>

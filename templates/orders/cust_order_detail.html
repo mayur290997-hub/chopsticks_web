@@ -1,0 +1,182 @@
+{% extends 'dashboard/web_dash.html' %}
+{% load static %}
+
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block headscript %}
+{% endblock headscript %}
+
+
+{% block content %}
+    <div class="order-cart">
+        <div class="menu-pg-two">
+
+            <div class="order-first">
+                <div class="container">
+                    <div class="row border-div">
+                        <div class="col-6">
+                            <div class="">
+                                <h6 class="order-line">MY ORDER</h6>
+                            </div>
+                        </div>
+                    </div>
+                    {% for order in order_details %}
+                    <div class="one-menu">
+                        <div class="menu-item item-div1">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="">
+                                        <span class="menu-item-nm">Order Date : <small>{{ order.created_at|date:"d-m-Y" }}</small></span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-center">
+                                        <span class="menu-item-price"><i class="fa fa-inr" aria-hidden="true"></i> {{order.total_bill}} </span>&nbsp; <i class="fa fa-angle-right" id="main-order{{order.pk}}" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="one-menu" id="order-detail{{order.pk}}" style="display: none">
+                        <div class="order-menu item-div1">
+                            {% for one in order.customer_order_detail_set.all %}
+                            <div class="order-item ">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="">
+                                            <i class="fa fa-square {% if one.dish_id.dish_type == 1 %} green-fa {% elif one.dish_id.dish_type == 2 %} orange-fa {% else %}{% endif %}"></i> <span class="menu-item-nm">{{one.dish_id.dish_name}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-center">
+                                            <span class="menu-item-price"><i class="fa fa-inr" aria-hidden="true"></i> {{one.dish_id.amount}} </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="quantity-div">
+                                <div class="form-row">
+                                    <div class="col">
+                                        <div class="form-row">
+                                            <div class="col-4">
+                                                <span class="qty">Qty</span>
+                                            </div>
+                                            <div class="col-8">
+                                                <select name="quantity" id="quantity" class="form-control form-control-sm qty-input">
+                                                    <option value={{one.pk}}>{{one.quantity}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if one.dish_id.dish_type != 3 %}
+                                    <div class="col">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input radio-btn1" type="checkbox" name="extra_item_1" id="extra_item_1" value="True" {% if one.extra_item_1 == True %} checked {% endif %}>
+                                            <label class="form-check-label extra-item-txt1" for="inlineRadio1">{{one.dish_id.extra_item_1}}</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input radio-btn1" type="checkbox" name="extra_item_2" id="extra_item_2" value="True" {% if one.extra_item_2 == True %} checked {% endif %}>
+                                            <label class="form-check-label extra-item-txt1" for="inlineRadio2">{{one.dish_id.extra_item_2}}</label>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <div class="order-details-div">
+                                <span for="order_title" class="span-div"><b>DELIVERY DETAILS :</b></span>
+                                <br>
+                                <div class="row">
+                                    <div class="col-5">
+                                        <label class="order-div"> FULL NAME:</label>
+                                    </div>
+                                    <div class="col-7">
+                                        <label class="detail-div"><b>{{all_customer.full_name}}</b></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-5">
+                                        <label class="order-div"> MOBILE NUMBER:</label>
+                                    </div>
+                                    <div class="col-7">
+                                        <label class="detail-div"><b>{{all_customer.custom_user_id.mobile_no}}</b></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-5">
+                                        <label class="order-div"> DELIVERY ADDRESS:</label>
+                                    </div>
+                                    <div class="col-7">
+                                        <label class="detail-div"><b>{{order.order_delivery_address}}</b></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-5">
+                                        <label class="order-div"> PAYMENT METHOD:</label>
+                                    </div>
+                                    <div class="col-7">
+                                        {% if order.payment_type == 1 %}
+                                        <label class="detail-div"><b>ONLINE</b></label>
+                                        {% else %}
+                                        <label class="detail-div"><b>CASH</b></label>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-5">
+                                        <label class="order-div"> PAYMENT STATUS:</label>
+                                    </div>
+                                    <div class="col-7">
+                                        {% if order.order_status == 1 %}
+                                        <label class="detail-div"><b>PENDING</b></label>
+                                        {% elif order.order_status == 2 %}
+                                        <label class="detail-div"><b>CANCLE</b></label>
+                                        {% elif order.order_status == 3 %}
+                                        <label class="detail-div"><b>COMPLETE</b></label>
+                                        {% elif order.order_status == 4 %}
+                                        <label class="detail-div"><b>DELIVERY</b></label>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-5">
+                                        <label class="order-div"> ORDER TOTAL<br>AMOUNT :</label>
+                                    </div>
+                                    <div class="col-7">
+                                        <label class="detail-div"><b><i class="fa fa-inr red" aria-hidden="true"></i>{{order.total_bill}}</b></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block extrascript %}
+
+<script>
+{% for order in order_details %}
+$('#main-order{{order.pk}}').click(function(){
+    if ($('#order-detail{{order.pk}}').css('display') == 'none') {
+        $('#order-detail{{order.pk}}').show();
+    }
+    else{
+        $('#order-detail{{order.pk}}').hide();
+    }
+});
+{% endfor %}
+</script>
+{% endblock %}

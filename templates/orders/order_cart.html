@@ -1,0 +1,182 @@
+{% extends 'dashboard/web_dash.html' %}
+{% load static %}
+
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block headscript %}
+{% endblock headscript %}
+
+
+{% block content %}
+<form method="POST" action="{% url 'orders:order_placed' outlet_objects.pk %}" autocomplete="off">
+    {% csrf_token %}
+    <div class="order-cart">
+        <div class="menu-pg-two">
+            <div class="order-first">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-7">
+                            <div class="">
+                                <h6 class="order-line1">ORDER CART</h6>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div class="text-center ">
+                                <i class="fa fa-square green-fa"></i> <span class="veg-txt">VEG</span> <i class="fa fa-square orange-fa"></i>
+                                <span class="veg-txt">NON VEG</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order_cart_div">
+                        {% for one in selected_dish %}
+                        <div class="one-menu">
+                            <div class="menu-item item-div1">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="">
+                                            <i class="fa fa-square green-fa"></i> <span class="menu-item-nm">{{one.0.dish_name}}</span>
+                                            <input type="hidden" value="{{one.0.pk}}" id="dish{{one.0.pk}}" name="dish{{one.0.pk}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-center">
+                                            <span class="menu-item-price"><i class="fa fa-inr" aria-hidden="true"></i> {{one.0.amount}} </span> <a href="#">&nbsp;&nbsp;<i class="fa fa-trash-o red-fa"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="quantity-div">
+                                <div class="form-row">
+                                    <div class="col-4">
+                                        <div class="form-row">
+                                            <div class="col-4">
+                                                <span name="quantity" id="quantity" class="qty">Qty</span>
+                                            </div>
+                                            <div class="col-8">
+                                                <select class="form-control form-control-sm qty-input" name="quantity{{one.0.pk}}" id="quantity{{one.0.pk}}">
+                                                    <option value="1" {% if one.1 == "1" %} selected {% endif %}>1</option>
+                                                    <option value="2" {% if one.1 == "2" %} selected {% endif %}>2</option>
+                                                    <option value="3" {% if one.1 == "3" %} selected {% endif %}>3</option>
+                                                    <option value="4" {% if one.1 == "4" %} selected {% endif %}>4</option>
+                                                    <option value="5" {% if one.1 == "5" %} selected {% endif %}>5</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if one.0.dish_type != 3 %}
+                                    <div class="col-4">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input radio-btn1" type="checkbox" name="extra_item1{{one.0.pk}}" id="extra_item1{{one.0.pk}}" value="1" {% if one.2 == "1" %} checked {% endif %}>
+                                            <label class="form-check-label extra-item-txt" for="inlineRadio1">{{one.0.extra_item_1}}</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input radio-btn1" type="checkbox" name="extra_item2{{one.0.pk}}" id="extra_item2{{one.0.pk}}" value="1" {% if one.3 == "1" %} checked {% endif %}>
+                                            <label class="form-check-label extra-item-txt" for="inlineRadio2">{{one.0.extra_item_2}}</label>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="">
+                        <a href="#" class="add-btn" style="margin-left: 230px; font-size: 10px;"><i class="fa fa-plus" aria-hidden="true"></i> ADD ITEM</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-first mt-1">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div class="">
+                                <h6 class="menu-line3">DELIVERY DETAILS</h6>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                        </div>
+                    </div>
+                    <div class="one-menu">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm input-div" autocomplete="off" id="user_name" name="user_name" placeholder="Enter Full Name" style="font-style:italic" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <input type="text" name="mobileno" value="+91" class="form-control form-control-sm input-div" style="font-size: 10px;height: 34px" readonly>
+                                </div>
+                            </div>
+                            <div class="col-10">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-sm input-div" autocomplete="off" id="user_mobile" name="user_mobile" placeholder="Enter Mobile Number" style="font-style:italic;height: 34px;" required maxlength="10" pattern="(7|8|9)\d{9}" oninvalid="setCustomValidity('Wrong Number.Please Enter Valid Number ')" onchange="try{setCustomValidity('')}catch(e){}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control form-control-sm input-div" id="user_address" autocomplete="off" name="user_address" placeholder="Enter Delivery Address" style="font-style:italic" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm input-div" name="landmark" id="landmark" autocomplete="off" name="landmark" placeholder="Enter landmark" style="font-style:italic" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-first mt-2">
+            <div class="row">
+                <div class="col-5">
+                    <div class="text-left">
+                        <h6 class="order-div payment-div red">PAYMENT METHOD</h6>
+                    </div>
+                </div>
+                <div class="col method-div">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="payment" id="online" value="1">
+                        <label class="form-check-label" for="online">ONLINE</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="payment" id="cash" value="2" checked>
+                        <label class="form-check-label" for="cash">CASH</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-first">
+        <div class="container-fluid">
+            <div class="">
+                <div class="row">
+                    <div class="col-7">
+                        <div class="row">
+                            <div class="col-7">
+                                <label class="order-div">Item Selected</label><br>
+                                <label class="order-div mt-3">Your Order TOTAL</label>
+                            </div>
+                            <div class="col">
+                                <label class="">{{total_quantity}}</label><br>
+                                <label class="big" ><b><span style="color: red;font-size: 10px;"><i class="fa fa-inr" aria-hidden="true"></i></span> {{total_amount}}</b> </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-lg green-btn1 submit-btn mt-3">PAY</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block extrascript %}
+{% endblock %}

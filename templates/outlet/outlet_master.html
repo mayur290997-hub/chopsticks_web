@@ -1,0 +1,133 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block headscript %}
+{% endblock headscript %}
+
+{% block content %}
+<div class="main">
+    <div class="container mt-4">
+        <h5><a href="#" class="btn btn-sm green-btn radius" data-toggle="modal" data-target="#add_outlet"><b>Add Outlet</b></a></h5>
+        <div class="modal fade" id="add_outlet" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add Outlet</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'outlet:add_outlet' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Outlet Name :</label>
+                                <input type="text" class="form-control form-control-sm" id="outlet_name" name="outlet_name" placeholder="Enter Outlet Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Outlet Location :</label>
+                                <input type="text" class="form-control form-control-sm" id="outlet_location" name="outlet_location" placeholder="Enter Outlet Locations">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Outlet Image :</label>
+                                <input type="file" class="form-control form-control-sm" id="outlet_image" name="outlet_image">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add New</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if error_msg %}<p style="color:red">{{error_msg}}</p>{% endif %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <div>
+                    <table id="table_id" class="display table-bordered table-sm" style="width: 100%;;font-size: 12px">
+                        <thead>
+                            <tr>
+                                <th>Sr. No.</th>
+                                <th>Outlet Name</th>
+                                <th>Outlet Location</th>
+                                <th>Outlet Image</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for one in outlet_objects %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{one.outlet_name}}</td>
+                                <td>{{one.outlet_location}}</td>
+                                <td>{{one.outlet_image}}</td>
+                                {% if one.is_active == True %}
+                                <td style="color:#50ef55">Active</td>
+                                {% else %}
+                                <td class="softer-text" style="color:#828586">Inactive</td>
+                                {% endif %}
+                                <td> <i class="fa fa-pencil" data-toggle="modal" data-target="#update{{one.pk}}"></i> </td>
+                                <!-- Modal -->
+                                <div class="modal fade" id="update{{one.pk}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Update Outlet</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{% url 'outlet:delete_outlet' one.pk %}" method="POST">
+                                                    {% csrf_token %}
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Outlet Name :</label>
+                                                        <input type="text" class="form-control form-control-sm" id="outlet_name" name="outlet_name" value="{{one.outlet_name}}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Outlet Location :</label>
+                                                        <input type="text" class="form-control form-control-sm" id="outlet_location" name="outlet_location" value="{{one.outlet_location}}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Outlet Image :</label>
+                                                        <input type="file" class="form-control form-control-sm" id="outlet_image" name="outlet_image" value="{{one.section_name}}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Status :</label>
+                                                        <select name="is_active" id="is_active" class="form-control form-control-sm">
+                                                            <option value="True" {% if one.is_active == True %} selected {% endif %}>Active</option>
+                                                            <option value="False" {% if one.is_active == False %} selected {% endif %}>Inactive</option>
+                                                        </select>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $('#table_id').DataTable();
+    });
+
+</script>
+{% endblock %}
+
+{% block extrascript %}
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'dashboard/web_dash.html' %}
+{% load static %}
+
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block headscript %}
+{% endblock headscript %}
+
+
+{% block content %}
+    <div class="">
+        <section class="" style="height:100vh">
+            <div class="login-web-box">
+                <form action="{% url 'accounts:user_otp' user.pk %}" method="POST" autocomplete="off">
+                    {% csrf_token %}
+                    <div class="">
+                        <div style="padding-top:110px">
+                            <p class="label-class">We have sent a 4 digit OTP to <br>the following number provided:</p>
+                            <p class="red bold number-class">{{user.mobile_no}}</p>
+                            <p class="label-class">Please enter OTP below.</p>
+                            <p class="red">{% if erroe_msg %}{{erroe_msg}}{% endif %}</p>
+                            <br>
+                            <div class="form-group">
+                                <div style="display: flex;justify-content: center" id="otp-container">
+                                    <input oninput="inputInsideOtpInput(this)" maxlength="1" style="width:20%;height:45px;font-weight: bold;font-size:18px;" type="text" name="otp1" id="otp1" required pattern="[0-9]{1}" onkeypress="return onlyNumberKey(event)">
+
+                                    <input oninput="inputInsideOtpInput(this)" maxlength="1" style="width:20%;height:45px;font-weight: bold;font-size:18px;" type="text" name="otp2" id="otp2" required pattern="[0-9]{1}" onkeypress="return onlyNumberKey(event)">
+
+                                    <input oninput="inputInsideOtpInput(this)" maxlength="1" style="width:20%;height:45px;font-weight: bold;font-size:18px;" type="text" name="otp3" id="otp3" required pattern="[0-9]{1}" onkeypress="return onlyNumberKey(event)">
+
+                                    <input oninput="inputInsideOtpInput(this)" maxlength="1" style="width:20%;height:45px;font-weight: bold;font-size:18px;" type="text" name="otp4" id="otp4" required pattern="[0-9]{1}" onkeypress="return onlyNumberKey(event)">
+                                </div>
+                            </div>
+
+                            <center>
+                                <input type="hidden" id="mobile_no" name="mobile_no" value="{{mobile_no}}"><br>
+                                <button type="submit" class="btn btn-sm a" style="font-size: 12px;background-color:#01e55a;color: #fff;width: 40%">submit</button>
+                            </center>
+                        </div>
+                    </div>
+                </form>
+                <center>
+                    <br><br>
+                    <a href="#" class="links">RESEND OTP</a>
+                    <br><br>
+                    <a href="#" class="links">CHANGE NUMBER</a>
+                </center>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block extrascript %}
+    <script>
+    function onlyNumberKey(evt) {
+
+        // Only ASCII charactar in that range allowed
+        var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+        if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+            return false;
+        return true;
+    }
+
+</script>
+<script>
+        function inputInsideOtpInput(el) {
+            if (el.value.length > 1) {
+                el.value = el.value[el.value.length - 1];
+            }
+            try {
+                if (el.value == null || el.value == "") {
+                    this.foucusOnInput(el.previousElementSibling);
+                } else {
+                    this.foucusOnInput(el.nextElementSibling);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function foucusOnInput(ele) {
+            ele.focus();
+            let val = ele.value;
+            ele.value = "";
+            // ele.value = val;
+            setTimeout(() => {
+                ele.value = val;
+            })
+        }
+    </script>
+
+{% endblock %}
